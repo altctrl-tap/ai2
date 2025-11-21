@@ -74,9 +74,9 @@ CONTENT_BY_LABEL: dict[str, dict[str, list[str]]] = {
     #   "images": ["https://.../jjampong1.jpg", "https://.../jjampong2.jpg"],
     #   "videos": ["https://youtu.be/XXXXXXXXXXX"]
     # },
-"짜장면" {}
-"text: ["38년장인의 수타면"]
-"images": ["https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.10000recipe.com%2Frecipe%2F1032173%3Fsrsltid%3DAfmBOopVJVRQCDpK5GL7W1eIjnsN1-o6ICfbP99GwH-yzgCgs6DOM3eM&psig=AOvVaw2HUIg4KclggP9wDNyC51tG&ust=1763788684211000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCLip_4W_gpEDFQAAAAAdAAAAABAE"]
+    labels[0] : {"texts" : ["중국식 냉면은 전 잘 시켜먹지 않는 메뉴입니다. 다만 맛있다고 합니다.], "images" : https://www.google.com/url?sa=i&url=https%3A%2F%2Fwtable.co.kr%2Frecipes%2FfCZFM5bTYZMU4saAcWR413Jy&psig=AOvVaw2UXmh4LuNDJPyMpb-TagLL&ust=1763789313900000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCLDQz7DBgpEDFQAAAAAdAAAAABAE]},
+    labels[1] : {"texts" : ["38년 전통의 수타 짜장면"], "ㅑ                
+
 # ======================
 # 유틸
 # ======================
