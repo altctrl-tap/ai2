@@ -74,9 +74,10 @@ CONTENT_BY_LABEL: dict[str, dict[str, list[str]]] = {
     #   "images": ["https://.../jjampong1.jpg", "https://.../jjampong2.jpg"],
     #   "videos": ["https://youtu.be/XXXXXXXXXXX"]
     # },
-    labels[0] : {"texts" : ["중국식 냉면은 전 잘 시켜먹지 않는 메뉴입니다. 다만 맛있다고 합니다.], "images" : https://www.google.com/url?sa=i&url=https%3A%2F%2Fwtable.co.kr%2Frecipes%2FfCZFM5bTYZMU4saAcWR413Jy&psig=AOvVaw2UXmh4LuNDJPyMpb-TagLL&ust=1763789313900000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCLDQz7DBgpEDFQAAAAAdAAAAABAE]},
-    labels[1] : {"texts" : ["38년 전통의 수타 짜장면"], "ㅑ                
-
+    labels[0] : {"texts" : ["중국식 냉면은 비인기지만 맛있어."], "images" : "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwtable.co.kr%2Frecipes%2FfCZFM5bTYZMU4saAcWR413Jy&psig=AOvVaw2UXmh4LuNDJPyMpb-TagLL&ust=1763789313900000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCLDQz7DBgpEDFQAAAAAdAAAAABAE"]},
+    labels[1] : {"texts" : ["짜장면은 맛있어."], "image" : "               
+    labels[2] : {"texts" : ["짬뽕은 맵게 맛있어."], "image" : "
+    labels[3] : {"texts" : ["탕수육은 맛있어."], "image" : "             
 # ======================
 # 유틸
 # ======================
