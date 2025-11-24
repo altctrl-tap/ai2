@@ -74,10 +74,10 @@ CONTENT_BY_LABEL: dict[str, dict[str, list[str]]] = {
     #   "images": ["https://.../jjampong1.jpg", "https://.../jjampong2.jpg"],
     #   "videos": ["https://youtu.be/XXXXXXXXXXX"]
     # },
-    labels[0] : {"texts" : ["중국식 냉면은 비인기지만 맛있어."], "images" : "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwtable.co.kr%2Frecipes%2FfCZFM5bTYZMU4saAcWR413Jy&psig=AOvVaw2UXmh4LuNDJPyMpb-TagLL&ust=1763789313900000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCLDQz7DBgpEDFQAAAAAdAAAAABAE"]},
-    labels[1] : {"texts" : ["짜장면은 맛있어."], "image" : "               
-    labels[2] : {"texts" : ["짬뽕은 맵게 맛있어."], "image" : "
-    labels[3] : {"texts" : ["탕수육은 맛있어."], "image" : "             
+    labels[0] : {"texts" : ["중국식 냉면은 비인기지만 맛있어."], "images" : ["https://www.esquirekorea.co.kr/resources_old/online/org_online_image/eq/71c93efd-352d-4fb4-8a98-dd1b51475442.jpg"]},
+    labels[1] : {"texts" : ["짜장면은 맛있어."], "image" : ["https://www.canceranswer.co.kr/news/photo/202103/2199_3592_056.jpg"]},               
+    labels[2] : {"texts" : ["짬뽕은 맵게 맛있어."], "image" : ["https://www.google.com/url?sa=i&url=https%3A%2F%2Fnamu.wiki%2Fw%2F%25EC%25A7%25AC%25EB%25BD%2595&psig=AOvVaw3VbWVMAR7ztTQJ6HYe1BLH&ust=1764029118287000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCIjouem9iZEDFQAAAAAdAAAAABAE"]},
+    labels[3] : {"texts" : ["탕수육은 맛있어."], "image" : ["https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.10000recipe.com%2Frecipe%2F6935781%3Fsrsltid%3DAfmBOopCQWYwRJO_6WtxBqLYwPWA_I7cejJIYXjSkzDfoy6oO5Non7LJ&psig=AOvVaw0k5zj9tGz-oalwSukBRfi_&ust=1764029157117000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCICunoK-iZEDFQAAAAAdAAAAABAE"]},             
 # ======================
 # 유틸
 # ======================
