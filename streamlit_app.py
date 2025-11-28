@@ -65,6 +65,7 @@ st.markdown("---")
 
 # ======================
 # 라벨 이름 매핑: 여기를 채우세요!
+# 각 라벨당 최대 3개씩 표시됩니다.
 # ======================
 CONTENT_BY_LABEL: dict[str, dict[str, list[str]]] = {
     labels[0] : {"texts" : ["중국식 냉면은 비인기지만 맛있어"], "images" : ["https://www.esquirekorea.co.kr/resources_old/online/org_online_image/eq/71c93efd-352d-4fb4-8a98-dd1b51475442.jpg"]},
@@ -72,6 +73,7 @@ CONTENT_BY_LABEL: dict[str, dict[str, list[str]]] = {
     labels[2] : {"texts" : ["짬뽕은 맵게 맛있어"], "images" : ["https://www.newiki.net/w/images/thumb/1/11/Jjampong.jpg/450px-Jjampong.jpg"]},
     labels[3] : {"texts" : ["탕수육은 맛있어"], "images" : ["https://recipe1.ezmember.co.kr/cache/recipe/2020/07/05/2e0e7c019f283bcc36d34cdee876d15b1.jpg"]},
 }
+
 # ======================
 # 유틸
 # ======================
@@ -136,30 +138,31 @@ if st.session_state.img_bytes:
         st.image(pil_img, caption="입력 이미지", use_container_width=True)
 
     with st.spinner("🧠 분석 중..."):
-        # 🟢 최종 수정된 예측 로직: predict() 함수에 맞춰 단일 이미지를 전처리합니다.
+        # 🟢 최종 수정된 예측 로직: get_preds와 배치 텐서 사용
         
-        # 1. 이미지를 Fastai PILImage 객체로 변환
         fastai_img = PILImage.create(pil_img) 
 
-        # 2. 아이템 변환 적용 (Resize, ToTensor 등)
-        # after_item을 사용하여 아이템 레벨의 변환을 적용합니다.
+        # 1. 아이템 변환 적용 (Resize, ToTensor 등)
         item_tfms = learner.dls.after_item(fastai_img)
 
-        # 3. 배치 변환 적용 (Normalize 등)
-        # before_batch를 사용하여 배치 레벨의 변환을 적용합니다. 단일 아이템이므로 리스트에 담습니다.
+        # 2. 배치 변환 적용 (Normalize 등) -> PyTorch 텐서 배치
         batch_tfms = learner.dls.before_batch([item_tfms])
         
-        # 4. predict 함수를 사용하여 예측 실행
-        # learner.predict()는 전처리된 텐서 배치를 입력으로 받을 때 (pred_label, pred_idx, probs)를 반환합니다.
-        # 이 방법은 test_dl을 사용하는 것보다 Streamlit에서 더 안정적인 경우가 많습니다.
-        pred, pred_idx, probs_tensor = learner.predict(batch_tfms)
+        # 3. get_preds로 예측 실행.
+        # dl=[(batch_tfms)]는 PyTorch/Fastai가 이 텐서를 단일 배치로 구성된 DataLoader처럼 취급하도록 합니다.
+        probs_tensor, dec_preds_tensor = learner.get_preds(dl=[(batch_tfms)], with_decoded=True)
 
-        # 5. 결과 파싱 및 상태 저장
-        pred = str(pred)
-        # probs_tensor는 1차원 텐서 (예: tensor([0.1, 0.7, 0.2]))
-        probs_list = probs_tensor.tolist() 
+        # 4. 결과 파싱 및 상태 저장
+        # dec_preds_tensor는 배치(1) x 1 크기의 텐서
+        pred_idx = dec_preds_tensor[0].item()
+        
+        # 확률 텐서 (배치(1) x 클래스 수)
+        probs_list = probs_tensor[0].tolist() 
+        
+        # 라벨 추출
+        pred = learner.dls.vocab[pred_idx]
 
-        st.session_state.last_prediction = pred
+        st.session_state.last_prediction = str(pred)
 
     with top_r:
         st.markdown(
@@ -178,6 +181,7 @@ if st.session_state.img_bytes:
     with left:
         st.subheader("상세 예측 확률")
         
+        # probs_list 변수 사용 (수정됨)
         prob_list = sorted(
             [(labels[i], float(probs_list[i])) for i in range(len(labels))],
             key=lambda x: x[1], reverse=True
@@ -198,7 +202,7 @@ if st.session_state.img_bytes:
                 """, unsafe_allow_html=True
             )
 
-    # 오른쪽: 정보 패널
+    # 오른쪽: 정보 패널 (예측 라벨 기본, 다른 라벨로 바꿔보기 가능)
     with right:
         st.subheader("라벨별 고정 콘텐츠")
         default_idx = labels.index(st.session_state.last_prediction) if st.session_state.last_prediction in labels else 0
@@ -209,7 +213,7 @@ if st.session_state.img_bytes:
         if not any([texts, images, videos]):
             st.info(f"라벨 `{info_label}`에 대한 콘텐츠가 아직 없습니다. 코드의 CONTENT_BY_LABEL에 추가하세요.")
         else:
-            # HTML 렌더링 수정 적용: 텍스트
+            # 텍스트
             if texts:
                 text_html = '<div class="info-grid">'
                 for t in texts:
@@ -222,7 +226,7 @@ if st.session_state.img_bytes:
                 text_html += '</div>'
                 st.markdown(text_html, unsafe_allow_html=True)
 
-            # HTML 렌더링 수정 적용: 이미지
+            # 이미지(최대 3, 3열)
             if images:
                 image_html = '<div class="info-grid">'
                 for url in images[:3]:
@@ -235,7 +239,7 @@ if st.session_state.img_bytes:
                 image_html += '</div>'
                 st.markdown(image_html, unsafe_allow_html=True)
 
-            # HTML 렌더링 수정 적용: 동영상
+            # 동영상(유튜브 썸네일)
             if videos:
                 video_html = '<div class="info-grid">'
                 for v in videos[:3]:
