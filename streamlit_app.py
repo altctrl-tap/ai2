@@ -66,19 +66,18 @@ st.markdown("---")
 # ======================
 # 라벨 이름 매핑: 여기를 채우세요!
 # 각 라벨당 최대 3개씩 표시됩니다.
-# (참고: labels[i] 대신 실제 라벨명을 사용하는 것이 더 안정적입니다.)
 # ======================
 CONTENT_BY_LABEL: dict[str, dict[str, list[str]]] = {
     # 예)
     # "짬뽕": {
-    #    "texts": ["짬뽕의 특징과 유래", "국물 맛 포인트", "지역별 스타일 차이"],
-    #    "images": ["https://.../jjampong1.jpg", "https://.../jjampong2.jpg"],
-    #    "videos": ["https://youtu.be/XXXXXXXXXXX"]
+    #   "texts": ["짬뽕의 특징과 유래", "국물 맛 포인트", "지역별 스타일 차이"],
+    #   "images": ["https://.../jjampong1.jpg", "https://.../jjampong2.jpg"],
+    #   "videos": ["https://youtu.be/XXXXXXXXXXX"]
     # },
     labels[0] : {"texts" : ["중국식 냉면은 비인기지만 맛있어"], "images" : ["https://www.esquirekorea.co.kr/resources_old/online/org_online_image/eq/71c93efd-352d-4fb4-8a98-dd1b51475442.jpg"]},
-    labels[1] : {"texts" : ["짜장면은 맛있어"], "images" : ["https://cdn.pixabay.com/photo/2021/04/24/18/43/jajangmyeon-6204555_1280.jpg"]},                
+    labels[1] : {"texts" : ["짜장면은 맛있어"], "images" : ["https://i.namu.wiki/i/j2AxLP9AtrcJebh4DVfGxowfXwI3a95dG_YZb_Ktczc6Ca7ACyd_NJL3YHQMw8SABGTQiJDwSpySOSSBLZVEZw.webp"]},               
     labels[2] : {"texts" : ["짬뽕은 맵게 맛있어"], "images" : ["https://www.newiki.net/w/images/thumb/1/11/Jjampong.jpg/450px-Jjampong.jpg"]},
-    labels[3] : {"texts" : ["탕수육은 맛있어"], "images" : ["https://recipe1.ezmember.co.kr/cache/recipe/2020/07/05/2e0e7c019f283bcc36d34cdee876d15b1.jpg"]},        
+    labels[3] : {"texts" : ["탕수육은 맛있어"], "images" : ["https://recipe1.ezmember.co.kr/cache/recipe/2020/07/05/2e0e7c019f283bcc36d34cdee876d15b1.jpg"]},       
 }
 # ======================
 # 유틸
@@ -126,7 +125,7 @@ with tab_cam:
 
 with tab_file:
     f = st.file_uploader("이미지를 업로드하세요 (jpg, png, jpeg, webp, tiff)",
-                             type=["jpg","png","jpeg","webp","tiff"])
+                         type=["jpg","png","jpeg","webp","tiff"])
     if f is not None:
         new_bytes = f.getvalue()
 
@@ -144,8 +143,7 @@ if st.session_state.img_bytes:
         st.image(pil_img, caption="입력 이미지", use_container_width=True)
 
     with st.spinner("🧠 분석 중..."):
-        # 💡 수정 1: PIL 이미지 객체를 직접 전달하여 fastai의 표준 파이프라인을 사용합니다.
-        pred, pred_idx, probs = learner.predict(pil_img)
+        pred, pred_idx, probs = learner.predict(PILImage.create(np.array(pil_img)))
         st.session_state.last_prediction = str(pred)
 
     with top_r:
@@ -184,7 +182,7 @@ if st.session_state.img_bytes:
                 """, unsafe_allow_html=True
             )
 
-    # 오른쪽: 정보 패널
+    # 오른쪽: 정보 패널 (예측 라벨 기본, 다른 라벨로 바꿔보기 가능)
     with right:
         st.subheader("라벨별 고정 콘텐츠")
         default_idx = labels.index(st.session_state.last_prediction) if st.session_state.last_prediction in labels else 0
@@ -195,39 +193,37 @@ if st.session_state.img_bytes:
         if not any([texts, images, videos]):
             st.info(f"라벨 `{info_label}`에 대한 콘텐츠가 아직 없습니다. 코드의 CONTENT_BY_LABEL에 추가하세요.")
         else:
-            # 💡 수정 2 적용: 텍스트 (단일 st.markdown 호출로 묶음)
+            # 텍스트
             if texts:
-                text_html = '<div class="info-grid">'
+                st.markdown('<div class="info-grid">', unsafe_allow_html=True)
                 for t in texts:
-                    text_html += f"""
+                    st.markdown(f"""
                     <div class="card" style="grid-column:span 12;">
                       <h4>텍스트</h4>
                       <div>{t}</div>
                     </div>
-                    """
-                text_html += '</div>'
-                st.markdown(text_html, unsafe_allow_html=True)
+                    """, unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
 
-            # 💡 수정 2 적용: 이미지(최대 3, 3열) (단일 st.markdown 호출로 묶음)
+            # 이미지(최대 3, 3열)
             if images:
-                image_html = '<div class="info-grid">'
+                st.markdown('<div class="info-grid">', unsafe_allow_html=True)
                 for url in images[:3]:
-                    image_html += f"""
+                    st.markdown(f"""
                     <div class="card" style="grid-column:span 4;">
                       <h4>이미지</h4>
                       <img src="{url}" class="thumb" />
                     </div>
-                    """
-                image_html += '</div>'
-                st.markdown(image_html, unsafe_allow_html=True)
+                    """, unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
 
-            # 💡 수정 2 적용: 동영상(유튜브 썸네일) (단일 st.markdown 호출로 묶음)
+            # 동영상(유튜브 썸네일)
             if videos:
-                video_html = '<div class="info-grid">'
+                st.markdown('<div class="info-grid">', unsafe_allow_html=True)
                 for v in videos[:3]:
                     thumb = yt_thumb(v)
                     if thumb:
-                        video_html += f"""
+                        st.markdown(f"""
                         <div class="card" style="grid-column:span 6;">
                           <h4>동영상</h4>
                           <a href="{v}" target="_blank" class="thumb-wrap">
@@ -236,15 +232,13 @@ if st.session_state.img_bytes:
                           </a>
                           <div class="helper">{v}</div>
                         </div>
-                        """
+                        """, unsafe_allow_html=True)
                     else:
-                        video_html += f"""
+                        st.markdown(f"""
                         <div class="card" style="grid-column:span 6;">
                           <h4>동영상</h4>
                           <a href="{v}" target="_blank">{v}</a>
                         </div>
-                        """
-                video_html += '</div>'
-                st.markdown(video_html, unsafe_allow_html=True)
+                        """, unsafe_allow_html=True)
 else:
     st.info("카메라로 촬영하거나 파일을 업로드하면 분석 결과와 라벨별 콘텐츠가 표시됩니다.")
