@@ -75,9 +75,9 @@ CONTENT_BY_LABEL: dict[str, dict[str, list[str]]] = {
     #   "videos": ["https://youtu.be/XXXXXXXXXXX"]
     # },
     labels[0] : {"texts" : ["중국식 냉면은 비인기지만 맛있어"], "images" : ["https://www.esquirekorea.co.kr/resources_old/online/org_online_image/eq/71c93efd-352d-4fb4-8a98-dd1b51475442.jpg"]},
-    labels[1] : {"texts" : ["짜장면은 맛있어"], "image" : [https://www.google.com/url?sa=i&url=https%3A%2F%2Fnamu.wiki%2Fw%2F%25EC%25A7%259C%25EC%259E%25A5%25EB%25A9%25B4&psig=AOvVaw14lNORELU30iSyKSWmBPzu&ust=1764392120269000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCIjgk4GHlJEDFQAAAAAdAAAAABAE"]},               
+    labels[1] : {"texts" : ["짜장면은 맛있어"], "image" : ["https://www.google.com/url?sa=i&url=https%3A%2F%2Fnamu.wiki%2Fw%2F%25EC%25A7%259C%25EC%259E%25A5%25EB%25A9%25B4&psig=AOvVaw14lNORELU30iSyKSWmBPzu&ust=1764392120269000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCIjgk4GHlJEDFQAAAAAdAAAAABAE"]},               
     labels[2] : {"texts" : ["짬뽕은 맵게 맛있어"], "image" : ["https://www.newiki.net/w/images/thumb/1/11/Jjampong.jpg/450px-Jjampong.jpg"]},
-    labels[3] : {"texts" : ["탕수육은 맛있어"], "image" : [https://recipe1.ezmember.co.kr/cache/recipe/2020/07/05/2e0e7c019f283bcc36d34cdee876d15b1.jpg"]},       
+    labels[3] : {"texts" : ["탕수육은 맛있어"], "image" : ["https://recipe1.ezmember.co.kr/cache/recipe/2020/07/05/2e0e7c019f283bcc36d34cdee876d15b1.jpg"]},       
 }
 # ======================
 # 유틸
