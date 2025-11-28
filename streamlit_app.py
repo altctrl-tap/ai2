@@ -136,20 +136,30 @@ if st.session_state.img_bytes:
         st.image(pil_img, caption="입력 이미지", use_container_width=True)
 
     with st.spinner("🧠 분석 중..."):
-        # 🟢 수정된 예측 로직: L(item)을 사용하여 Fastai 형식의 컬렉션을 만듭니다.
+        # 🟢 최종 수정된 예측 로직: predict() 함수에 맞춰 단일 이미지를 전처리합니다.
+        
+        # 1. 이미지를 Fastai PILImage 객체로 변환
         fastai_img = PILImage.create(pil_img) 
-        dl = learner.dls.test_dl(L(fastai_img), with_labels=False)
+
+        # 2. 아이템 변환 적용 (Resize, ToTensor 등)
+        # after_item을 사용하여 아이템 레벨의 변환을 적용합니다.
+        item_tfms = learner.dls.after_item(fastai_img)
+
+        # 3. 배치 변환 적용 (Normalize 등)
+        # before_batch를 사용하여 배치 레벨의 변환을 적용합니다. 단일 아이템이므로 리스트에 담습니다.
+        batch_tfms = learner.dls.before_batch([item_tfms])
         
-        # probs는 텐서, dec_preds는 인덱스 (텐서)
-        probs_tensor, dec_preds_tensor = learner.get_preds(dl=dl, with_decoded=True)
-        
-        # 텐서에서 실제 값 추출
-        probs = probs_tensor[0]
-        pred_idx = dec_preds_tensor[0].item()
-        
-        # 라벨 추출
-        pred = learner.dls.vocab[pred_idx]
-        st.session_state.last_prediction = str(pred)
+        # 4. predict 함수를 사용하여 예측 실행
+        # learner.predict()는 전처리된 텐서 배치를 입력으로 받을 때 (pred_label, pred_idx, probs)를 반환합니다.
+        # 이 방법은 test_dl을 사용하는 것보다 Streamlit에서 더 안정적인 경우가 많습니다.
+        pred, pred_idx, probs_tensor = learner.predict(batch_tfms)
+
+        # 5. 결과 파싱 및 상태 저장
+        pred = str(pred)
+        # probs_tensor는 1차원 텐서 (예: tensor([0.1, 0.7, 0.2]))
+        probs_list = probs_tensor.tolist() 
+
+        st.session_state.last_prediction = pred
 
     with top_r:
         st.markdown(
@@ -167,9 +177,6 @@ if st.session_state.img_bytes:
     # 왼쪽: 확률 막대
     with left:
         st.subheader("상세 예측 확률")
-        
-        # probs (토치 텐서)를 리스트로 변환하여 사용
-        probs_list = probs.tolist()
         
         prob_list = sorted(
             [(labels[i], float(probs_list[i])) for i in range(len(labels))],
