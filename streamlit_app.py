@@ -218,7 +218,7 @@ if st.session_state.img_bytes:
                 text_html = '<div class="info-grid">'
                 for t in texts:
                     text_html += f"""
-                    <div class="card" style="grid-column:span 12;">
+                    <div class="card" style='grid-column:span 12;'>
                       <h4>텍스트</h4>
                       <div>{t}</div>
                     </div>
@@ -231,9 +231,9 @@ if st.session_state.img_bytes:
                 image_html = '<div class="info-grid">'
                 for url in images[:3]:
                     image_html += f"""
-                    <div class="card" style="grid-column:span 4;">
+                    <div class="card" style='grid-column:span 4;'>
                       <h4>이미지</h4>
-                      <img src="{url}" class="thumb" />
+                      <img src="{url}" class='thumb' />
                     </div>
                     """
                 image_html += '</div>'
@@ -245,18 +245,26 @@ if st.session_state.img_bytes:
                 for v in videos[:3]:
                     thumb = yt_thumb(v)
                     if thumb:
+                        # 수정된 부분 1: HTML 속성에 작은 따옴표(') 사용
                         video_html += f"""
-                        <div class="card" style="grid-column:span 6;">
+                        <div class="card" style='grid-column:span 6;'>
                           <h4>동영상</h4>
-                          <a href="{v}" target="_blank" class="thumb-wrap">
-                            <img src="{thumb}" class="thumb"/>
-                            <div class="play"></div>
+                          <a href="{v}" target='_blank' class='thumb-wrap'>
+                            <img src="{thumb}" class='thumb'/>
+                            <div class='play'></div>
                           </a>
-                          <div class="helper">{v}</div>
+                          <div class='helper'>{v}</div>
                         </div>
                         """
                     else:
+                        # 수정된 부분 2: HTML 속성에 작은 따옴표(') 사용
                         video_html += f"""
-                        <div class="card" style="grid-column:span 6;">
+                        <div class="card" style='grid-column:span 6;'>
                           <h4>동영상</h4>
-                          <a href
+                          <a href="{v}" target='_blank'>{v}</a>
+                        </div>
+                        """
+                video_html += '</div>'
+                st.markdown(video_html, unsafe_allow_html=True)
+else:
+    st.info("카메라로 촬영하거나 파일을 업로드하면 분석 결과와 라벨별 콘텐츠가 표시됩니다.")
