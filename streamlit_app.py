@@ -65,17 +65,10 @@ st.markdown("---")
 
 # ======================
 # 라벨 이름 매핑: 여기를 채우세요!
-# 각 라벨당 최대 3개씩 표시됩니다.
 # ======================
 CONTENT_BY_LABEL: dict[str, dict[str, list[str]]] = {
-    # 예)
-    # "짬뽕": {
-    #    "texts": ["짬뽕의 특징과 유래", "국물 맛 포인트", "지역별 스타일 차이"],
-    #    "images": ["https://.../jjampong1.jpg", "https://.../jjampong2.jpg"],
-    #    "videos": ["https://youtu.be/XXXXXXXXXXX"]
-    # },
     labels[0] : {"texts" : ["중국식 냉면은 비인기지만 맛있어"], "images" : ["https://www.esquirekorea.co.kr/resources_old/online/org_online_image/eq/71c93efd-352d-4fb4-8a98-dd1b51475442.jpg"]},
-    labels[1] : {"texts" : ["짜장면은 맛있어"], "images" : ["https://cdn.pixabay.com/photo/2021/04/24/18/43/jajangmyeon-6204555_1280.jpg"]},
+    labels[1] : {"texts" : ["짜장면은 맛있어"], "images" : ["https://m.health.chosun.com/site/data/img_dir/2024/08/02/2024080201848_0.jpg"]}, 
     labels[2] : {"texts" : ["짬뽕은 맵게 맛있어"], "images" : ["https://www.newiki.net/w/images/thumb/1/11/Jjampong.jpg/450px-Jjampong.jpg"]},
     labels[3] : {"texts" : ["탕수육은 맛있어"], "images" : ["https://recipe1.ezmember.co.kr/cache/recipe/2020/07/05/2e0e7c019f283bcc36d34cdee876d15b1.jpg"]},
 }
@@ -143,8 +136,19 @@ if st.session_state.img_bytes:
         st.image(pil_img, caption="입력 이미지", use_container_width=True)
 
     with st.spinner("🧠 분석 중..."):
-        # 🟢 수정 1: PIL 이미지 객체를 fastai predict에 직접 전달합니다.
-        pred, pred_idx, probs = learner.predict(pil_img) 
+        # 🟢 수정된 예측 로직: L(item)을 사용하여 Fastai 형식의 컬렉션을 만듭니다.
+        fastai_img = PILImage.create(pil_img) 
+        dl = learner.dls.test_dl(L(fastai_img), with_labels=False)
+        
+        # probs는 텐서, dec_preds는 인덱스 (텐서)
+        probs_tensor, dec_preds_tensor = learner.get_preds(dl=dl, with_decoded=True)
+        
+        # 텐서에서 실제 값 추출
+        probs = probs_tensor[0]
+        pred_idx = dec_preds_tensor[0].item()
+        
+        # 라벨 추출
+        pred = learner.dls.vocab[pred_idx]
         st.session_state.last_prediction = str(pred)
 
     with top_r:
@@ -163,8 +167,12 @@ if st.session_state.img_bytes:
     # 왼쪽: 확률 막대
     with left:
         st.subheader("상세 예측 확률")
+        
+        # probs (토치 텐서)를 리스트로 변환하여 사용
+        probs_list = probs.tolist()
+        
         prob_list = sorted(
-            [(labels[i], float(probs[i])) for i in range(len(labels))],
+            [(labels[i], float(probs_list[i])) for i in range(len(labels))],
             key=lambda x: x[1], reverse=True
         )
         for lbl, p in prob_list:
@@ -183,7 +191,7 @@ if st.session_state.img_bytes:
                 """, unsafe_allow_html=True
             )
 
-    # 오른쪽: 정보 패널 (예측 라벨 기본, 다른 라벨로 바꿔보기 가능)
+    # 오른쪽: 정보 패널
     with right:
         st.subheader("라벨별 고정 콘텐츠")
         default_idx = labels.index(st.session_state.last_prediction) if st.session_state.last_prediction in labels else 0
@@ -194,7 +202,7 @@ if st.session_state.img_bytes:
         if not any([texts, images, videos]):
             st.info(f"라벨 `{info_label}`에 대한 콘텐츠가 아직 없습니다. 코드의 CONTENT_BY_LABEL에 추가하세요.")
         else:
-            # 🟢 수정 2 적용: 텍스트 (단일 st.markdown 호출로 묶음)
+            # HTML 렌더링 수정 적용: 텍스트
             if texts:
                 text_html = '<div class="info-grid">'
                 for t in texts:
@@ -207,7 +215,7 @@ if st.session_state.img_bytes:
                 text_html += '</div>'
                 st.markdown(text_html, unsafe_allow_html=True)
 
-            # 🟢 수정 2 적용: 이미지(최대 3, 3열) (단일 st.markdown 호출로 묶음)
+            # HTML 렌더링 수정 적용: 이미지
             if images:
                 image_html = '<div class="info-grid">'
                 for url in images[:3]:
@@ -220,7 +228,7 @@ if st.session_state.img_bytes:
                 image_html += '</div>'
                 st.markdown(image_html, unsafe_allow_html=True)
 
-            # 🟢 수정 2 적용: 동영상(유튜브 썸네일) (단일 st.markdown 호출로 묶음)
+            # HTML 렌더링 수정 적용: 동영상
             if videos:
                 video_html = '<div class="info-grid">'
                 for v in videos[:3]:
