@@ -1,4 +1,3 @@
-
 # streamlit_py
 import os, re
 from io import BytesIO
@@ -137,8 +136,19 @@ if st.session_state.img_bytes:
         st.image(pil_img, caption="입력 이미지", use_container_width=True)
 
     with st.spinner("🧠 분석 중..."):
-        # 올바르게 수정된 예측 라인
-        pred, pred_idx, probs = learner.predict(PILImage.create(pil_img)) 
+        # 🟢 수정된 예측 로직: DataLoader와 get_preds 사용
+        fastai_img = PILImage.create(pil_img) 
+        dl = learner.dls.test_dl([fastai_img], with_labels=False)
+        
+        # probs는 텐서 (예: tensor([0.1, 0.7, 0.2])), dec_preds는 인덱스 (예: tensor(1))
+        probs_tensor, dec_preds_tensor = learner.get_preds(dl=dl, with_decoded=True)
+        
+        # 텐서에서 실제 값 추출
+        probs = probs_tensor[0]
+        pred_idx = dec_preds_tensor[0].item()
+        
+        # 라벨 추출
+        pred = learner.dls.vocab[pred_idx]
         st.session_state.last_prediction = str(pred)
 
     with top_r:
@@ -157,8 +167,12 @@ if st.session_state.img_bytes:
     # 왼쪽: 확률 막대
     with left:
         st.subheader("상세 예측 확률")
+        
+        # probs (토치 텐서)를 리스트로 변환하여 사용
+        probs_list = probs.tolist()
+        
         prob_list = sorted(
-            [(labels[i], float(probs[i])) for i in range(len(labels))],
+            [(labels[i], float(probs_list[i])) for i in range(len(labels))],
             key=lambda x: x[1], reverse=True
         )
         for lbl, p in prob_list:
