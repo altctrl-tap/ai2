@@ -137,7 +137,7 @@ if st.session_state.img_bytes:
 
     with st.spinner("🧠 분석 중..."):
         # Fastai 예측 수정 적용
-        pred, pred_idx, probs = learner.predict(pil_img) 
+        pred, pred_idx, probs = learner.predict(PILImage.create(pil_img)
         st.session_state.last_prediction = str(pred)
 
     with top_r:
