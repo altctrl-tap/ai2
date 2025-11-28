@@ -138,28 +138,29 @@ if st.session_state.img_bytes:
         st.image(pil_img, caption="입력 이미지", use_container_width=True)
 
     with st.spinner("🧠 분석 중..."):
-        # 🟢 최종 수정된 예측 로직: get_preds와 배치 텐서 사용
         
         fastai_img = PILImage.create(pil_img) 
 
         # 1. 아이템 변환 적용 (Resize, ToTensor 등)
         item_tfms = learner.dls.after_item(fastai_img)
 
-        # 2. 배치 변환 적용 (Normalize 등) -> PyTorch 텐서 배치
+        # 2. 배치 변환 적용 (Normalize 등) -> PyTorch 텐서
         batch_tfms = learner.dls.before_batch([item_tfms])
         
-        # 3. get_preds로 예측 실행.
-        # dl=[(batch_tfms)]는 PyTorch/Fastai가 이 텐서를 단일 배치로 구성된 DataLoader처럼 취급하도록 합니다.
+        # 3. [핵심 수정] 텐서 형태 및 타입 명확히 지정
+        # (1) 배치 차원 추가 (모델 입력은 (B, C, H, W) 형태여야 함)
+        if batch_tfms.ndim == 3:
+            batch_tfms = batch_tfms.unsqueeze(0) # 3차원 -> 4차원 (1, C, H, W)
+        
+        # (2) CPU 이동 및 float32 타입 확인 (conv2d 호환성 확보)
+        batch_tfms = batch_tfms.to('cpu').float() 
+
+        # 4. get_preds로 예측 실행.
         probs_tensor, dec_preds_tensor = learner.get_preds(dl=[(batch_tfms)], with_decoded=True)
 
-        # 4. 결과 파싱 및 상태 저장
-        # dec_preds_tensor는 배치(1) x 1 크기의 텐서
+        # 5. 결과 파싱 및 상태 저장
         pred_idx = dec_preds_tensor[0].item()
-        
-        # 확률 텐서 (배치(1) x 클래스 수)
         probs_list = probs_tensor[0].tolist() 
-        
-        # 라벨 추출
         pred = learner.dls.vocab[pred_idx]
 
         st.session_state.last_prediction = str(pred)
@@ -181,7 +182,6 @@ if st.session_state.img_bytes:
     with left:
         st.subheader("상세 예측 확률")
         
-        # probs_list 변수 사용 (수정됨)
         prob_list = sorted(
             [(labels[i], float(probs_list[i])) for i in range(len(labels))],
             key=lambda x: x[1], reverse=True
@@ -259,10 +259,4 @@ if st.session_state.img_bytes:
                         video_html += f"""
                         <div class="card" style="grid-column:span 6;">
                           <h4>동영상</h4>
-                          <a href="{v}" target="_blank">{v}</a>
-                        </div>
-                        """
-                video_html += '</div>'
-                st.markdown(video_html, unsafe_allow_html=True)
-else:
-    st.info("카메라로 촬영하거나 파일을 업로드하면 분석 결과와 라벨별 콘텐츠가 표시됩니다.")
+                          <a href
