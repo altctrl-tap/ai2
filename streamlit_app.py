@@ -75,7 +75,7 @@ CONTENT_BY_LABEL: dict[str, dict[str, list[str]]] = {
     #   "videos": ["https://youtu.be/XXXXXXXXXXX"]
     # },
     labels[0] : {"texts" : ["중국식 냉면은 비인기지만 맛있어"], "images" : ["https://www.esquirekorea.co.kr/resources_old/online/org_online_image/eq/71c93efd-352d-4fb4-8a98-dd1b51475442.jpg"]},
-    labels[1] : {"texts" : ["짜장면은 맛있어"], "images" : ["https://stock.adobe.com/kr/images/korean-black-bean-noodles-jjajangmyeon-n-thick-wheat-noodles-topped-with-rich-savory-black-soybean-paste-sauce-stir-fried-with-pork-and-vegetables-a-popular-korean-chinese-fusion-dish/1584273671"]},               
+    labels[1] : {"texts" : ["짜장면은 맛있어"], "images" : ["https://cdn.pixabay.com/photo/2021/04/24/18/43/jajangmyeon-6204555_1280.jpg"]},               
     labels[2] : {"texts" : ["짬뽕은 맵게 맛있어"], "images" : ["https://www.newiki.net/w/images/thumb/1/11/Jjampong.jpg/450px-Jjampong.jpg"]},
     labels[3] : {"texts" : ["탕수육은 맛있어"], "images" : ["https://recipe1.ezmember.co.kr/cache/recipe/2020/07/05/2e0e7c019f283bcc36d34cdee876d15b1.jpg"]},       
 }
@@ -143,7 +143,7 @@ if st.session_state.img_bytes:
         st.image(pil_img, caption="입력 이미지", use_container_width=True)
 
     with st.spinner("🧠 분석 중..."):
-        pred, pred_idx, probs = learner.predict(PILImage(pil_img))
+        pred, pred_idx, probs = learner.predict(PILImage.create(np.array(pil_img)))
         st.session_state.last_prediction = str(pred)
 
     with top_r:
