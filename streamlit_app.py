@@ -144,11 +144,11 @@ if st.session_state.img_bytes:
         # 1. 아이템 변환 적용 (Resize, ToTensor 등)
         item_tfms = learner.dls.after_item(fastai_img)
 
-        # 2. 배치 변환 적용 (Normalize 등) -> PyTorch 텐서 또는 튜플
+        # 2. 배치 변환 적용 (Normalize 등) -> PyTorch 텐서 또는 컨테이너
         batch_tfms = learner.dls.before_batch([item_tfms])
         
-        # 🟢 수정: batch_tfms가 튜플일 경우 텐서만 추출
-        if isinstance(batch_tfms, tuple):
+        # 🟢 수정: batch_tfms가 컨테이너(튜플 또는 리스트)일 경우 텐서가 될 때까지 첫 번째 요소 추출
+        while isinstance(batch_tfms, (tuple, list)):
             batch_tfms = batch_tfms[0]
             
         # 3. [핵심 수정] 텐서 형태 및 타입 명확히 지정
