@@ -75,7 +75,7 @@ CONTENT_BY_LABEL: dict[str, dict[str, list[str]]] = {
     #   "videos": ["https://youtu.be/XXXXXXXXXXX"]
     # },
     labels[0] : {"texts" : ["중국식 냉면은 비인기지만 맛있어"], "images" : ["https://www.esquirekorea.co.kr/resources_old/online/org_online_image/eq/71c93efd-352d-4fb4-8a98-dd1b51475442.jpg"]},
-    labels[1] : {"texts" : ["짜장면은 맛있어"], "images" : ["https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.kurly.com%2Fgoods%2F1000198864&psig=AOvVaw2T3_PtpCMLna1NDONoFtE3&ust=1764393224320000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCOC25Y6LlJEDFQAAAAAdAAAAABAk.jpg"]},               
+    labels[1] : {"texts" : ["짜장면은 맛있어"], "images" : ["https://stock.adobe.com/kr/images/korean-black-bean-noodles-jjajangmyeon-n-thick-wheat-noodles-topped-with-rich-savory-black-soybean-paste-sauce-stir-fried-with-pork-and-vegetables-a-popular-korean-chinese-fusion-dish/1584273671"]},               
     labels[2] : {"texts" : ["짬뽕은 맵게 맛있어"], "images" : ["https://www.newiki.net/w/images/thumb/1/11/Jjampong.jpg/450px-Jjampong.jpg"]},
     labels[3] : {"texts" : ["탕수육은 맛있어"], "images" : ["https://recipe1.ezmember.co.kr/cache/recipe/2020/07/05/2e0e7c019f283bcc36d34cdee876d15b1.jpg"]},       
 }
