@@ -143,7 +143,7 @@ if st.session_state.img_bytes:
         st.image(pil_img, caption="입력 이미지", use_container_width=True)
 
     with st.spinner("🧠 분석 중..."):
-        pred, pred_idx, probs = learner.predict(pil_img)
+        pred, pred_idx, probs = learner.predict(PILImage(pil_img))
         st.session_state.last_prediction = str(pred)
 
     with top_r:
