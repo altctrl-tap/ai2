@@ -144,9 +144,13 @@ if st.session_state.img_bytes:
         # 1. 아이템 변환 적용 (Resize, ToTensor 등)
         item_tfms = learner.dls.after_item(fastai_img)
 
-        # 2. 배치 변환 적용 (Normalize 등) -> PyTorch 텐서
+        # 2. 배치 변환 적용 (Normalize 등) -> PyTorch 텐서 또는 튜플
         batch_tfms = learner.dls.before_batch([item_tfms])
         
+        # 🟢 수정: batch_tfms가 튜플일 경우 텐서만 추출
+        if isinstance(batch_tfms, tuple):
+            batch_tfms = batch_tfms[0]
+            
         # 3. [핵심 수정] 텐서 형태 및 타입 명확히 지정
         # (1) 배치 차원 추가 (모델 입력은 (B, C, H, W) 형태여야 함)
         if batch_tfms.ndim == 3:
@@ -245,7 +249,7 @@ if st.session_state.img_bytes:
                 for v in videos[:3]:
                     thumb = yt_thumb(v)
                     if thumb:
-                        # 수정된 부분 1: HTML 속성에 작은 따옴표(') 사용
+                        # HTML 속성에 작은 따옴표(') 사용
                         video_html += f"""
                         <div class="card" style='grid-column:span 6;'>
                           <h4>동영상</h4>
@@ -257,7 +261,7 @@ if st.session_state.img_bytes:
                         </div>
                         """
                     else:
-                        # 수정된 부분 2: HTML 속성에 작은 따옴표(') 사용
+                        # HTML 속성에 작은 따옴표(') 사용
                         video_html += f"""
                         <div class="card" style='grid-column:span 6;'>
                           <h4>동영상</h4>
