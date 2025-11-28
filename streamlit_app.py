@@ -1,21 +1,12 @@
-또다시 구문 오류가 발생했군요. 정말 죄송합니다! 😔
+이번 오류는 파이썬 코드가 아닌, 제가 이전 답변에 사용했던 이모지(emoji) 때문에 발생했습니다. 파이썬 인터프리터는 코드 첫 줄에 있는 이모지 '😔'(U+1F614)를 유효한 문자로 인식하지 못해 SyntaxError를 냅니다.
 
-이번 오류는 제가 이전에 고친 부분을 사용자가 코드를 복사/붙여넣기 하는 과정에서 다시 한번 닫는 괄호 ) 대신 **닫는 중괄호 }**를 입력하거나, 코드가 유실되는 과정에서 잘못 복원되었기 때문입니다.
+사용자가 제공한 코드는 제가 최종적으로 드린 코드가 아니라, 제 답변 내용(코드 설명과 이모지)이 파이썬 스크립트 파일에 복사되어 버린 것 같습니다.
 
-learner.predict(PILImage.create(pil_img)} 라인은 닫는 괄호가 2개로 끝나야 합니다.
+🛠️ 해결 방법
+/mount/src/ai2/streamlit_app.py 파일의 모든 내용을 지우고 아래의 순수한 파이썬 코드만 복사하여 다시 붙여넣어주세요. 코드 시작 부분에 있는 모든 설명이나 이모티콘을 제거하고, 순수하게 # streamlit_py로 시작해야 합니다.
 
-🛠️ 문제의 140번째 줄 수정
-/mount/src/ai2/streamlit_app.py 파일의 140번째 줄을 찾아 다음처럼 완벽하게 교체해 주세요.
-
-Python
-
-# ❌ 현재 오류가 발생하는 라인
-# pred, pred_idx, probs = learner.predict(PILImage.create(pil_img)}
-
-# 🟢 이렇게 수정해야 합니다: 닫는 괄호 두 개를 사용
-pred, pred_idx, probs = learner.predict(PILImage.create(pil_img))
-🚀 오류가 완벽히 수정된 최종 코드
-이 코드는 모든 구문 오류와 이전의 논리 오류를 수정한 최종 버전입니다. 이 코드를 복사하여 /mount/src/ai2/streamlit_app.py 파일의 내용을 완전히 대체해 주십시오.
+🚀 순수한 최종 코드 (이모지 제거)
+이 코드는 앞서 모든 논리/구문 오류를 해결하고, 짜장면 이미지 링크가 교체되었으며, 이모지와 설명이 없는 깨끗한 버전입니다.
 
 Python
 
@@ -157,6 +148,7 @@ if st.session_state.img_bytes:
         st.image(pil_img, caption="입력 이미지", use_container_width=True)
 
     with st.spinner("🧠 분석 중..."):
+        # 올바르게 수정된 예측 라인
         pred, pred_idx, probs = learner.predict(PILImage.create(pil_img)) 
         st.session_state.last_prediction = str(pred)
 
